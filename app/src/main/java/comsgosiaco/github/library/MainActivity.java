@@ -2,6 +2,8 @@ package comsgosiaco.github.library;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.DialogFragment;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -20,9 +22,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.util.Patterns;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+import java.util.regex.Pattern;
+
+public class MainActivity extends AppCompatActivity implements exportEmailDialogFragment.exportEmailDialogListener, NavigationView.OnNavigationItemSelectedListener {
 
     private static final int ZBAR_CAMERA_PERMISSION = 1;
     private Class<?> mClss;
@@ -51,21 +55,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (requestCode == 1) {
-            if(resultCode == Activity.RESULT_OK){
-                String barcode = data.getStringExtra("barcode");
-                TextView text = (TextView) findViewById(R.id.textNEW);
-                text.setText(barcode);
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
-            }
-        }
-    }//onActivityResult
 
     @Override
     public void onBackPressed() {
@@ -105,25 +94,35 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-            Intent i = new Intent(MainActivity.this, FullScannerActivity.class);
-            startActivityForResult(i, 1);
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        if (id == R.id.library) {
+            showToast("Library");
+        } else if (id == R.id.loanbook) {
+            showToast("Loan");
+        } else if (id == R.id.returnbook) {
+            showToast("Return");
+        } else if (id == R.id.exportall) {
+            DialogFragment fragment = new exportEmailDialogFragment();
+            fragment.show(getFragmentManager(), "exportall");
+        } else if (id == R.id.exportcheckedout) {
+            showToast("Export loaned");
+        } else if (id == R.id.exportavailable) {
+            showToast("Export available");
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog, CharSequence email) {
+        showToast(email);
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        // User touched the dialog's negative button
+
     }
 
     public void launchActivity(Class<?> clss) {
@@ -152,5 +151,13 @@ public class MainActivity extends AppCompatActivity
                 }
                 return;
         }
+    }
+
+    public void showToast(CharSequence text)
+    {
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
     }
 }

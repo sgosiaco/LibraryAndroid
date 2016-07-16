@@ -45,17 +45,16 @@
         android:layout_below="@+id/author"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_toLeftOf="@+id/button"
-        android:layout_toStartOf="@+id/button"
+        android:layout_toStartOf="@+id/scanButton"
         android:hint="ISBN"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:layout_toLeftOf="@+id/scanButton" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Scan"
-        android:id="@+id/button"
-        android:onClick="scan"
+        android:id="@+id/scanButton"
         android:layout_alignBottom="@+id/isbn"
         android:layout_alignRight="@+id/author"
         android:layout_alignEnd="@+id/author" />
@@ -95,7 +94,7 @@
         android:layout_alignParentRight="true"
         android:src="@android:drawable/ic_input_add"
         android:onClick="add"
- />
+        app:backgroundTint="?attr/colorPrimary" />
 
     <WebView
         android:layout_width="wrap_content"
@@ -106,15 +105,7 @@
         android:layout_alignParentStart="true"
         android:layout_above="@+id/fab"
         android:layout_alignRight="@+id/isbn"
-        android:layout_alignEnd="@+id/isbn" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/textView2"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignEnd="@+id/isbn"
+        android:layout_alignParentTop="false" />
 
 </RelativeLayout>
