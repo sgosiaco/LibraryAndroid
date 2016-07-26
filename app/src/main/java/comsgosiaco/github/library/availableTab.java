@@ -48,7 +48,7 @@ public class availableTab extends AppCompatActivity {
         obj.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                Cursor cursor = librarydb.getData(arg2 + 1);
+                Cursor cursor = librarydb.getData(arg2);
                 cursor.moveToFirst();
                 String title = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_TITLE));
                 String loanee = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_LOANEE));
@@ -61,7 +61,7 @@ public class availableTab extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
                                            int pos, long id) {
-                Cursor cursor = librarydb.getData(pos+1);
+                Cursor cursor = librarydb.getData(pos);
                 cursor.moveToFirst();
                 int ID = cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ID));
                 String title = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_TITLE));

@@ -14,7 +14,7 @@ import android.support.design.widget.TabLayout;
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "library.db";
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 4;
     public static final String TABLE_NAME = "library";
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_TITLE = "title"; //book title
@@ -38,7 +38,7 @@ public class DBHelper extends SQLiteOpenHelper {
         // TODO Auto-generated method stub
         db.execSQL(
                 "create table " + TABLE_NAME + " " +
-                        "(id integer primary key, title text, author text, publisher text, year text, isbn text, loaned text, loanee text, email text, date text)"
+                        "(id integer primary key autoincrement, title text, author text, publisher text, year text, isbn text, loaned text, loanee text, email text, date text)"
         );
     }
 
@@ -49,6 +49,13 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+
+    public void resetIncrement()
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from " + TABLE_NAME);
+        db.execSQL("delete from sqlite_sequence where name='" + TABLE_NAME + "'");
+    }
     public boolean insertBook(String title, String author, String publisher, String year, String isbn, String loaned, String loanee, String email, String date)
     {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -68,7 +75,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Cursor getData(int id){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where id="+id+"", null );
+        //Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where id="+id+"", null );
+        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " order by id limit 1 offset " + id, null );
         return res;
     }
 
@@ -149,7 +157,7 @@ public class DBHelper extends SQLiteOpenHelper {
         res.moveToFirst();
 
         while(res.isAfterLast() == false){
-            if(!res.getString(res.getColumnIndex(COLUMN_LOANED)).equals("TRUE"))
+            if(!(res.getString(res.getColumnIndex(COLUMN_LOANED)).equals("TRUE")))
             {
                 array_list.add(res.getString(res.getColumnIndex(COLUMN_TITLE)));
             }

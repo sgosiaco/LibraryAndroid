@@ -61,9 +61,9 @@ public class loanTab extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
                                            int pos, long id) {
-                Cursor cursor = librarydb.getData(pos + 1);
+                Cursor cursor = librarydb.getData(pos);
                 cursor.moveToFirst();
-                librarydb.deleteBook(pos + 1);
+                librarydb.deleteBook(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ID)));
                 array_list = librarydb.getAllAvailableBooks();
                 arrayAdapter.clear();
                 arrayAdapter.addAll(array_list);
@@ -126,7 +126,7 @@ public class loanTab extends AppCompatActivity {
                         {
                             if(!email.equals("") && !name.equals(""))
                             {
-                                Cursor cs = librarydb.getData(index+1);
+                                Cursor cs = librarydb.getData(index);
                                 cs.moveToFirst();
                                 int id = cs.getInt(cs.getColumnIndex(DBHelper.COLUMN_ID));
                                 String title = cs.getString(cs.getColumnIndex(DBHelper.COLUMN_TITLE));
