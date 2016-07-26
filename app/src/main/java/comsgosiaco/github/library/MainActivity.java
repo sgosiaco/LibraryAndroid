@@ -110,10 +110,11 @@ public class MainActivity extends AppCompatActivity implements exportEmailDialog
             //showToast("Library");
             //launchActivity(libraryTab.class);
         } else if (id == R.id.loanbook) {
-            showToast("Loan");
+            //showToast("Loan");
             launchActivity(loanTab.class);
         } else if (id == R.id.returnbook) {
-            showToast("Return");
+            //showToast("Return");
+            launchActivity(availableTab.class);
         } else if (id == R.id.exportall) {
             //DialogFragment fragment = new exportEmailDialogFragment();
             //fragment.show(getFragmentManager(), "exportall");
@@ -152,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements exportEmailDialog
         } else {
             Intent intent = new Intent(this, clss);
             startActivity(intent);
+            //overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         }
     }
 
@@ -224,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements exportEmailDialog
                             //TextView emailEntry = (TextView) findViewById(R.id.textView2);
                             //emailEntry.setText(email);
                             String[] address = {email};
-                            composeEmail(address, "Export all books", Uri.fromFile(new File("/sdcard/fpse.txt"))); //replace with correct file
+                            composeEmail(address, "Export all books", Uri.fromFile(new File("library.db"))); //replace with correct file
                         }
                     }
 

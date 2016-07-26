@@ -51,6 +51,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="comsgosiaco.github.library.MainActivity" />
         </activity>
+        <activity
+            android:name=".availableTab"
+            android:label="@string/title_activity_available_tab"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="comsgosiaco.github.library.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

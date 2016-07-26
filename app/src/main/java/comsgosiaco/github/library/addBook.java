@@ -72,7 +72,7 @@ public class addBook extends AppCompatActivity implements addBookDialogFragment.
         TextView isbnText = (TextView) findViewById(R.id.isbn);
         TextView publisherText = (TextView) findViewById(R.id.publisher);
         TextView dateText = (TextView) findViewById(R.id.year);
-        if(librarydb.insertBook(titleText.getText().toString(), authorText.getText().toString(), publisherText.getText().toString(), dateText.getText().toString(), isbnText.getText().toString()))
+        if(librarydb.insertBook(titleText.getText().toString(), authorText.getText().toString(), publisherText.getText().toString(), dateText.getText().toString(), isbnText.getText().toString(), "FALSE", "", "", ""))
         {
             DialogFragment fragment = new addBookDialogFragment();
             fragment.show(getFragmentManager(), "add_book");

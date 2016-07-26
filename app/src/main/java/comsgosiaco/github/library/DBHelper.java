@@ -14,7 +14,7 @@ import android.support.design.widget.TabLayout;
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "library.db";
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
     public static final String TABLE_NAME = "library";
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_TITLE = "title"; //book title
@@ -22,6 +22,10 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_PUBLISHER = "publisher"; //book publisher
     public static final String COLUMN_YEAR = "year"; //year publisher
     public static final String COLUMN_ISBN = "isbn"; //isbn
+    public static final String COLUMN_LOANED = "loaned"; //loaned or not TRUE or FALSE
+    public static final String COLUMN_LOANEE = "loanee"; //person borrowing the book
+    public static final String COLUMN_EMAIL = "email"; //email of borrower
+    public static final String COLUMN_DATE = "date"; //date loaned
     private HashMap hp;
 
     public DBHelper(Context context)
@@ -34,7 +38,7 @@ public class DBHelper extends SQLiteOpenHelper {
         // TODO Auto-generated method stub
         db.execSQL(
                 "create table " + TABLE_NAME + " " +
-                        "(id integer primary key, title text, author text, publisher text, year text, isbn text)"
+                        "(id integer primary key, title text, author text, publisher text, year text, isbn text, loaned text, loanee text, email text, date text)"
         );
     }
 
@@ -45,7 +49,7 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertBook(String title, String author, String publisher, String year, String isbn)
+    public boolean insertBook(String title, String author, String publisher, String year, String isbn, String loaned, String loanee, String email, String date)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -54,6 +58,10 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("publisher", publisher);
         contentValues.put("year", year);
         contentValues.put("isbn", isbn);
+        contentValues.put("loaned", loaned);
+        contentValues.put("loanee", loanee);
+        contentValues.put("email", email);
+        contentValues.put("date", date);
         db.insert(TABLE_NAME, null, contentValues);
         return true;
     }
@@ -70,7 +78,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return numRows;
     }
 
-    public boolean updateBook(int id, String title, String author, String publisher, String year, String isbn)
+    public boolean updateBook(int id, String title, String author, String publisher, String year, String isbn, String loaned, String loanee, String email, String date)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -80,6 +88,10 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("publisher", publisher);
         contentValues.put("year", year);
         contentValues.put("isbn", isbn);
+        contentValues.put("loaned", loaned);
+        contentValues.put("loanee", loanee);
+        contentValues.put("email", email);
+        contentValues.put("date", date);
         db.update(TABLE_NAME, contentValues, "id = ? ", new String[] { Integer.toString(id) } );
         return true;
     }
@@ -103,6 +115,44 @@ public class DBHelper extends SQLiteOpenHelper {
 
         while(res.isAfterLast() == false){
             array_list.add(res.getString(res.getColumnIndex(COLUMN_TITLE)));
+            res.moveToNext();
+        }
+        return array_list;
+    }
+
+    public ArrayList<String> getAllLoanedBooks()
+    {
+        ArrayList<String> array_list = new ArrayList<String>();
+
+        //hp = new HashMap();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME, null );
+        res.moveToFirst();
+
+        while(res.isAfterLast() == false){
+            if(res.getString(res.getColumnIndex(COLUMN_LOANED)).equals("TRUE"))
+            {
+                array_list.add(res.getString(res.getColumnIndex(COLUMN_TITLE)));
+            }
+            res.moveToNext();
+        }
+        return array_list;
+    }
+
+    public ArrayList<String> getAllAvailableBooks()
+    {
+        ArrayList<String> array_list = new ArrayList<String>();
+
+        //hp = new HashMap();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME, null );
+        res.moveToFirst();
+
+        while(res.isAfterLast() == false){
+            if(!res.getString(res.getColumnIndex(COLUMN_LOANED)).equals("TRUE"))
+            {
+                array_list.add(res.getString(res.getColumnIndex(COLUMN_TITLE)));
+            }
             res.moveToNext();
         }
         return array_list;
