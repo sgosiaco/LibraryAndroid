@@ -4,7 +4,8 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:allowBackup="true"
@@ -35,7 +36,16 @@
             android:name=".addBook"
             android:label="@string/title_activity_add_book"
             android:parentActivityName=".MainActivity"
-            android:windowSoftInputMode="adjustPan"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustPan">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="comsgosiaco.github.library.MainActivity" />
+        </activity>
+        <activity
+            android:name=".loanTab"
+            android:label="@string/title_activity_loan_tab"
+            android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

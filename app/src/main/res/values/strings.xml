@@ -25,4 +25,5 @@
     <string name="ok_button">OK</string>
     <string name="cancel_button">Cancel</string>
     <string name="title_activity_add_book">addBook</string>
+    <string name="title_activity_loan_tab">loanTab</string>
 </resources>

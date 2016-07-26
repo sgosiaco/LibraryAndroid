@@ -30,6 +30,7 @@ import java.io.FileWriter;
 
 public class addBook extends AppCompatActivity implements addBookDialogFragment.addBookDialogListener {
 
+    private DBHelper librarydb;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +53,7 @@ public class addBook extends AppCompatActivity implements addBookDialogFragment.
                 scan(v);
             }
         });
+        librarydb = new DBHelper(this);
     }
 
     public void scan(View view)
@@ -64,8 +66,22 @@ public class addBook extends AppCompatActivity implements addBookDialogFragment.
     public void add(View view)
     {
         //add saving here
-        DialogFragment fragment = new addBookDialogFragment();
-        fragment.show(getFragmentManager(), "add_book");
+        TextView titleText = (TextView) findViewById(R.id.title);
+        showToast(titleText.getText().toString());
+        TextView authorText = (TextView) findViewById(R.id.author);
+        TextView isbnText = (TextView) findViewById(R.id.isbn);
+        TextView publisherText = (TextView) findViewById(R.id.publisher);
+        TextView dateText = (TextView) findViewById(R.id.year);
+        if(librarydb.insertBook(titleText.getText().toString(), authorText.getText().toString(), publisherText.getText().toString(), dateText.getText().toString(), isbnText.getText().toString()))
+        {
+            DialogFragment fragment = new addBookDialogFragment();
+            fragment.show(getFragmentManager(), "add_book");
+        }
+        else
+        {
+            showToast("FATAL ERROR HAS OCCURED IN ADDING NEW BOOK!");
+        }
+
     }
 
     @Override

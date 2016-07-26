@@ -3,14 +3,20 @@ package comsgosiaco.github.library;
 import android.Manifest;
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ListFragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -20,10 +26,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Patterns;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity implements exportEmailDialogFragment.exportEmailDialogListener, NavigationView.OnNavigationItemSelectedListener {
@@ -95,17 +107,23 @@ public class MainActivity extends AppCompatActivity implements exportEmailDialog
         int id = item.getItemId();
 
         if (id == R.id.library) {
-            showToast("Library");
+            //showToast("Library");
+            //launchActivity(libraryTab.class);
         } else if (id == R.id.loanbook) {
             showToast("Loan");
+            launchActivity(loanTab.class);
         } else if (id == R.id.returnbook) {
             showToast("Return");
         } else if (id == R.id.exportall) {
-            DialogFragment fragment = new exportEmailDialogFragment();
-            fragment.show(getFragmentManager(), "exportall");
+            //DialogFragment fragment = new exportEmailDialogFragment();
+            //fragment.show(getFragmentManager(), "exportall");
+            doLaunchContactPicker(this.findViewById(android.R.id.content), 1001);
+            showToast("Export all");
         } else if (id == R.id.exportcheckedout) {
+            doLaunchContactPicker(this.findViewById(android.R.id.content), 1002);
             showToast("Export loaned");
         } else if (id == R.id.exportavailable) {
+            doLaunchContactPicker(this.findViewById(android.R.id.content), 1003);
             showToast("Export available");
         }
 
@@ -159,5 +177,152 @@ public class MainActivity extends AppCompatActivity implements exportEmailDialog
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
+    }
+
+    public void doLaunchContactPicker(View view, int code) {
+        Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        startActivityForResult(contactPickerIntent, code);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            String email = "";
+            Cursor cursor = null;
+            switch (requestCode) {
+                case 1001: //Export all
+                    try {
+                        Uri result = data.getData();
+
+                        // get the contact id from the Uri
+                        String id = result.getLastPathSegment();
+
+                        // query for everything email
+                        cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+                                null, ContactsContract.CommonDataKinds.Email.CONTACT_ID + "=?", new String[] { id },
+                                null);
+
+                        int emailIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA);
+
+                        // let's just get the first email
+                        if (cursor.moveToFirst()) {
+                            email = cursor.getString(emailIdx);
+                        }
+                    } catch (Exception e) {
+                        showToast("Failed to get email data");
+                    } finally {
+                        if (cursor != null) {
+                            cursor.close();
+                        }
+                        if (email.length() == 0 || !isValidEmail(email)) {
+                            Toast.makeText(this, "No email found for contact.",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                        else
+                        {
+                            //do something with email here
+                            //TextView emailEntry = (TextView) findViewById(R.id.textView2);
+                            //emailEntry.setText(email);
+                            String[] address = {email};
+                            composeEmail(address, "Export all books", Uri.fromFile(new File("/sdcard/fpse.txt"))); //replace with correct file
+                        }
+                    }
+
+                    break;
+                case 1002: //Export loaned
+                    try {
+                        Uri result = data.getData();
+
+                        // get the contact id from the Uri
+                        String id = result.getLastPathSegment();
+
+                        // query for everything email
+                        cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+                                null, ContactsContract.CommonDataKinds.Email.CONTACT_ID + "=?", new String[] { id },
+                                null);
+
+                        int emailIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA);
+
+                        // let's just get the first email
+                        if (cursor.moveToFirst()) {
+                            email = cursor.getString(emailIdx);
+                        }
+                    } catch (Exception e) {
+                        showToast("Failed to get email data");
+                    } finally {
+                        if (cursor != null) {
+                            cursor.close();
+                        }
+                        if (email.length() == 0 || !isValidEmail(email)) {
+                            Toast.makeText(this, "No email found for contact.",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                        else
+                        {
+                            //do something with email here
+                            TextView emailEntry = (TextView) findViewById(R.id.textView);
+                            emailEntry.setText(email);
+                        }
+                    }
+
+                    break;
+                case 1003: //Export available
+                    try {
+                        Uri result = data.getData();
+
+                        // get the contact id from the Uri
+                        String id = result.getLastPathSegment();
+
+                        // query for everything email
+                        cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+                                null, ContactsContract.CommonDataKinds.Email.CONTACT_ID + "=?", new String[] { id },
+                                null);
+
+                        int emailIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA);
+
+                        // let's just get the first email
+                        if (cursor.moveToFirst()) {
+                            email = cursor.getString(emailIdx);
+                        }
+                    } catch (Exception e) {
+                        showToast("Failed to get email data");
+                    } finally {
+                        if (cursor != null) {
+                            cursor.close();
+                        }
+                        if (email.length() == 0 || !isValidEmail(email)) {
+                            Toast.makeText(this, "No email found for contact.",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                        else
+                        {
+                            //do something with email here
+                            showToast(email);
+                        }
+                    }
+
+                    break;
+            }
+
+        } else {
+            showToast("Warning: activity result not ok");
+        }
+    }
+
+    private boolean isValidEmail(CharSequence email)
+    {
+        Pattern pattern = Patterns.EMAIL_ADDRESS;
+        return pattern.matcher(email).matches();
+    }
+
+    public void composeEmail(String[] addresses, String subject, Uri attachment) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("*/*");
+        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_STREAM, attachment);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 }
