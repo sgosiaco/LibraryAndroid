@@ -80,6 +80,20 @@ public class DBHelper extends SQLiteOpenHelper {
         return res;
     }
 
+    public Cursor getLoanData(int id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        //Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where id="+id+"", null );
+        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " order by loaned DESC limit 1 offset " + id, null );
+        return res;
+    }
+
+    public Cursor getAvailData(int id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        //Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where id="+id+"", null );
+        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " order by loaned ASC limit 1 offset " + id, null );
+        return res;
+    }
+
     public int numberOfRows(){
         SQLiteDatabase db = this.getReadableDatabase();
         int numRows = (int) DatabaseUtils.queryNumEntries(db, TABLE_NAME);

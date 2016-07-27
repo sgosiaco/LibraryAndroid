@@ -67,7 +67,7 @@ public class addBook extends AppCompatActivity implements addBookDialogFragment.
     {
         //add saving here
         TextView titleText = (TextView) findViewById(R.id.title);
-        showToast(titleText.getText().toString());
+        //showToast(titleText.getText().toString());
         TextView authorText = (TextView) findViewById(R.id.author);
         TextView isbnText = (TextView) findViewById(R.id.isbn);
         TextView publisherText = (TextView) findViewById(R.id.publisher);
@@ -196,7 +196,7 @@ public class addBook extends AppCompatActivity implements addBookDialogFragment.
 
                         TextView barcodeText = (TextView) findViewById(R.id.isbn);
                         barcodeText.setText(barcode);
-                        showToast(barcode);
+                        //showToast(barcode);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

@@ -14,6 +14,7 @@ import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements exportEmailDialog
 
     private static final int ZBAR_CAMERA_PERMISSION = 1;
     private Class<?> mClss;
+    public static ActionBarDrawerToggle toggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements exportEmailDialog
         });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
@@ -108,13 +110,22 @@ public class MainActivity extends AppCompatActivity implements exportEmailDialog
 
         if (id == R.id.library) {
             //showToast("Library");
-            //launchActivity(libraryTab.class);
+            FragmentManager fm = getSupportFragmentManager();
+            android.support.v4.app.FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.fragment, new libraryFragment());
+            ft.commit();
         } else if (id == R.id.loanbook) {
             //showToast("Loan");
-            launchActivity(loanTab.class);
+            FragmentManager fm = getSupportFragmentManager();
+            android.support.v4.app.FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.fragment, new loanFragment());
+            ft.commit();
         } else if (id == R.id.returnbook) {
             //showToast("Return");
-            launchActivity(availableTab.class);
+            FragmentManager fm = getSupportFragmentManager();
+            android.support.v4.app.FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.fragment, new returnFragment());
+            ft.commit();
         } else if (id == R.id.exportall) {
             //DialogFragment fragment = new exportEmailDialogFragment();
             //fragment.show(getFragmentManager(), "exportall");
@@ -188,6 +199,7 @@ public class MainActivity extends AppCompatActivity implements exportEmailDialog
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             String email = "";
             Cursor cursor = null;
@@ -307,7 +319,7 @@ public class MainActivity extends AppCompatActivity implements exportEmailDialog
             }
 
         } else {
-            showToast("Warning: activity result not ok");
+            //showToast("Warning: activity result not ok");
         }
     }
 
