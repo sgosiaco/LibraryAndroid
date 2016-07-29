@@ -80,6 +80,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return res;
     }
 
+    public Cursor getData(String title){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where title like \"%"+title+"%\"", null );
+        //Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where title collate nocase =\""+title+"\"", null );
+        return res;
+    }
+
     public Cursor getLoanData(int id){
         SQLiteDatabase db = this.getReadableDatabase();
         //Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where id="+id+"", null );
@@ -87,10 +94,31 @@ public class DBHelper extends SQLiteOpenHelper {
         return res;
     }
 
+    public Cursor getLoanData(String title){
+        SQLiteDatabase db = this.getReadableDatabase();
+        //Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where id="+id+"", null );
+        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where title='"+title+"' order by loaned DESC limit 1 offset 0", null );
+        return res;
+    }
+
     public Cursor getAvailData(int id){
         SQLiteDatabase db = this.getReadableDatabase();
         //Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where id="+id+"", null );
         Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " order by loaned ASC limit 1 offset " + id, null );
+        return res;
+    }
+
+    public Cursor getAvailData(String title){
+        SQLiteDatabase db = this.getReadableDatabase();
+        //Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where id="+id+"", null );
+        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where title='"+title+"' order by loaned ASC limit 1 offset 0", null );
+        return res;
+    }
+
+    public Cursor getDataExact(String title){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where title='"+title+"' limit 1 offset 0", null );
+        //Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where title collate nocase =\""+title+"\"", null );
         return res;
     }
 
@@ -168,6 +196,60 @@ public class DBHelper extends SQLiteOpenHelper {
         //hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res =  db.rawQuery( "select * from " + TABLE_NAME, null );
+        res.moveToFirst();
+
+        while(res.isAfterLast() == false){
+            if(!(res.getString(res.getColumnIndex(COLUMN_LOANED)).equals("TRUE")))
+            {
+                array_list.add(res.getString(res.getColumnIndex(COLUMN_TITLE)));
+            }
+            res.moveToNext();
+        }
+        return array_list;
+    }
+
+    public ArrayList<String> getAllBooks(String title)
+    {
+        ArrayList<String> array_list = new ArrayList<String>();
+
+        //hp = new HashMap();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where title like \"%"+title+"%\"", null );
+        res.moveToFirst();
+
+        while(res.isAfterLast() == false){
+            array_list.add(res.getString(res.getColumnIndex(COLUMN_TITLE)));
+            res.moveToNext();
+        }
+        return array_list;
+    }
+
+    public ArrayList<String> getAllLoanedBooks(String title)
+    {
+        ArrayList<String> array_list = new ArrayList<String>();
+
+        //hp = new HashMap();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where title like \"%"+title+"%\"", null );
+        res.moveToFirst();
+
+        while(res.isAfterLast() == false){
+            if(res.getString(res.getColumnIndex(COLUMN_LOANED)).equals("TRUE"))
+            {
+                array_list.add(res.getString(res.getColumnIndex(COLUMN_TITLE)));
+            }
+            res.moveToNext();
+        }
+        return array_list;
+    }
+
+    public ArrayList<String> getAllAvailableBooks(String title)
+    {
+        ArrayList<String> array_list = new ArrayList<String>();
+
+        //hp = new HashMap();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where title like \"%"+title+"%\"", null );
         res.moveToFirst();
 
         while(res.isAfterLast() == false){

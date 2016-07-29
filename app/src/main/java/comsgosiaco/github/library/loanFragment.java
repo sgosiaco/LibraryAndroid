@@ -10,8 +10,12 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.util.Patterns;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -43,6 +47,8 @@ public class loanFragment extends ListFragment{
         arrayAdapter= new ArrayAdapter(inflater.getContext(),android.R.layout.simple_list_item_1, array_list);
         setListAdapter(arrayAdapter);
         view.setBackgroundColor(Color.parseColor("#FAFAFA"));
+
+        setHasOptionsMenu(true);
         return view;
     }
 
@@ -72,7 +78,9 @@ public class loanFragment extends ListFragment{
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        Cursor cursor = librarydb.getData(position);
+        //Cursor cursor = librarydb.getAvailData(position);
+        //showToast((String) array_list.get(position));
+        Cursor cursor = librarydb.getAvailData((String) array_list.get(position));
         cursor.moveToFirst();
         String title = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_TITLE));
         String author = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_AUTHOR));
@@ -80,6 +88,61 @@ public class loanFragment extends ListFragment{
         showToast(title + " <" + isbn + "> by " + author);
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        //inflater.inflate(R.menu.main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+        final MenuItem searchItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //showToast( "Loan: " + query);
+                Cursor cursor = librarydb.getData(query);
+                if(cursor.getCount() == 0)
+                {
+                    showToast(query + " doesn't exist!");
+                    if( ! searchView.isIconified()) {
+                        searchView.setIconified(true);
+                    }
+                    searchItem.collapseActionView();
+                    return false;
+                }
+                array_list = librarydb.getAllAvailableBooks(query);
+                arrayAdapter.clear();
+                arrayAdapter.addAll(array_list);
+                arrayAdapter.notifyDataSetChanged();
+                if( ! searchView.isIconified()) {
+                    searchView.setIconified(true);
+                }
+                searchItem.collapseActionView();
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String s) {
+                // UserFeedback.show( "SearchOnQueryTextChanged: " + s);
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if(id == R.id.action_refresh)
+        {
+            array_list = librarydb.getAllAvailableBooks();
+            arrayAdapter.clear();
+            arrayAdapter.addAll(array_list);
+            arrayAdapter.notifyDataSetChanged();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     public void showToast(CharSequence text)
     {
@@ -134,7 +197,7 @@ public class loanFragment extends ListFragment{
                         {
                             if(!email.equals("") && !name.equals(""))
                             {
-                                Cursor cs = librarydb.getAvailData(index);
+                                Cursor cs = librarydb.getAvailData((String) array_list.get(index));
                                 cs.moveToFirst();
                                 int id = cs.getInt(cs.getColumnIndex(DBHelper.COLUMN_ID));
                                 String title = cs.getString(cs.getColumnIndex(DBHelper.COLUMN_TITLE));

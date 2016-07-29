@@ -17,6 +17,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -44,6 +45,14 @@ public class MainActivity extends AppCompatActivity implements exportEmailDialog
     private static final int ZBAR_CAMERA_PERMISSION = 1;
     private Class<?> mClss;
     public static ActionBarDrawerToggle toggle;
+    //private DBHelper librarydb;
+    //private ArrayList array_list;
+    //private ArrayAdapter<String> arrayAdapter;
+    //private ListView obj;
+
+    //TO DO List
+    //add search to all tabs
+    //alert if adding duplicate book
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +77,18 @@ public class MainActivity extends AppCompatActivity implements exportEmailDialog
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //librarydb = new DBHelper(this);
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        FragmentManager fm = getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.fragment, new libraryFragment());
+        ft.commit();
     }
 
     @Override
@@ -95,10 +116,16 @@ public class MainActivity extends AppCompatActivity implements exportEmailDialog
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
+        /*
         if (id == R.id.action_settings) {
             return true;
         }
-
+        <item
+android:id="@+id/action_settings"
+android:orderInCategory="100"
+android:title="@string/action_settings"
+app:showAsAction="never" />
+        */
         return super.onOptionsItemSelected(item);
     }
 
