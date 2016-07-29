@@ -64,6 +64,12 @@ public class loanFragment extends SwipeRefreshListFragment{
                 setRefreshing(false);
             }
         });
+
+        setColorScheme(
+                R.color.colorPrimary,
+                R.color.colorAccent,
+                R.color.colorPrimary,
+                R.color.colorAccent);
     }
 
     @Override
