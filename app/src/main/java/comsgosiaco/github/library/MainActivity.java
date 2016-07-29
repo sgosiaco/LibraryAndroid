@@ -13,6 +13,7 @@ import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -75,6 +76,13 @@ public class MainActivity extends AppCompatActivity implements exportEmailDialog
         navigationView.setNavigationItemSelectedListener(this);
 
         librarydb = new DBHelper(this);
+
+        if (savedInstanceState == null) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            libraryFragment fragment = new libraryFragment();
+            transaction.replace(R.id.fragment, fragment);
+            transaction.commit();
+        }
     }
 
     @Override

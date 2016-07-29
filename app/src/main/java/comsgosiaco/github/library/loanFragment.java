@@ -8,16 +8,14 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.support.v4.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.util.Patterns;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -28,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-public class loanFragment extends ListFragment{
+public class loanFragment extends SwipeRefreshListFragment{
 
     private DBHelper librarydb;
     private ArrayList array_list;
@@ -39,17 +37,42 @@ public class loanFragment extends ListFragment{
     private int RESULT_OK = -1;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
-        librarydb = new DBHelper(inflater.getContext());
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Notify the system to allow an options menu for this fragment.
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        librarydb = new DBHelper(getActivity());
         array_list = librarydb.getAllAvailableBooks();
-        arrayAdapter= new ArrayAdapter(inflater.getContext(),android.R.layout.simple_list_item_1, array_list);
+        arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, array_list);
         setListAdapter(arrayAdapter);
         view.setBackgroundColor(Color.parseColor("#FAFAFA"));
 
-        setHasOptionsMenu(true);
-        return view;
+        setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                array_list = librarydb.getAllAvailableBooks();
+                arrayAdapter.clear();
+                arrayAdapter.addAll(array_list);
+                arrayAdapter.notifyDataSetChanged();
+                setRefreshing(false);
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        array_list = librarydb.getAllAvailableBooks();
+        arrayAdapter.clear();
+        arrayAdapter.addAll(array_list);
+        arrayAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -93,7 +116,7 @@ public class loanFragment extends ListFragment{
             @Override
             public boolean onQueryTextSubmit(String query) {
                 //showToast( "Loan: " + query);
-                Cursor cursor = librarydb.getData(query);
+                Cursor cursor = librarydb.getData(query, "FALSE");
                 if(cursor.getCount() == 0)
                 {
                     showToast(query + " doesn't exist!");

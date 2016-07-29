@@ -5,15 +5,13 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -22,34 +20,58 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 
-public class libraryFragment extends ListFragment {
+public class libraryFragment extends SwipeRefreshListFragment {
 
     private DBHelper librarydb;
     private ArrayList array_list;
     private ArrayAdapter<String> arrayAdapter;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
-        librarydb = new DBHelper(inflater.getContext());
-        array_list = librarydb.getAllBooks();
-        arrayAdapter = new ArrayAdapter(inflater.getContext(),android.R.layout.simple_list_item_1, array_list);
-        setListAdapter(arrayAdapter);
-        view.setBackgroundColor(Color.parseColor("#FAFAFA"));
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
+        // Notify the system to allow an options menu for this fragment.
         setHasOptionsMenu(true);
-
-        return view;
     }
 
     @Override
-    public void onActivityCreated(Bundle savedState)
-    {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        librarydb = new DBHelper(getActivity());
+        array_list = librarydb.getAllBooks();
+        arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, array_list);
+        setListAdapter(arrayAdapter);
+        view.setBackgroundColor(Color.parseColor("#FAFAFA"));
+
+        setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                array_list = librarydb.getAllBooks();
+                arrayAdapter.clear();
+                arrayAdapter.addAll(array_list);
+                arrayAdapter.notifyDataSetChanged();
+                setRefreshing(false);
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        array_list = librarydb.getAllBooks();
+        arrayAdapter.clear();
+        arrayAdapter.addAll(array_list);
+        arrayAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedState) {
         super.onActivityCreated(savedState);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Library");
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(63,81,181)));
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(63, 81, 181)));
         MainActivity.toggle.syncState();
 
         getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -74,15 +96,12 @@ public class libraryFragment extends ListFragment {
         cursor.moveToFirst();
         String title = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_TITLE));
         String loaned = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_LOANED));
-        if(loaned.equals("TRUE"))
-        {
+        if (loaned.equals("TRUE")) {
             String loanee = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_LOANEE));
             String email = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_EMAIL));
             String date = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_DATE));
             showToast(title + " loaned to " + loanee + " <" + email + "> on " + date);
-        }
-        else
-        {
+        } else {
             showToast(title + " is not loaned out");
         }
     }
@@ -96,27 +115,29 @@ public class libraryFragment extends ListFragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                //showToast( "Main library: " + query);
+                //showToast("Main library: " + query);
                 Cursor cursor = librarydb.getData(query);
-                if(cursor.getCount() == 0)
-                {
+                if (cursor.getCount() == 0) {
                     showToast(query + " doesn't exist!");
-                    if( ! searchView.isIconified()) {
+                    if (!searchView.isIconified()) {
                         searchView.setIconified(true);
                     }
                     searchItem.collapseActionView();
                     return false;
                 }
+
                 array_list = librarydb.getAllBooks(query);
                 arrayAdapter.clear();
                 arrayAdapter.addAll(array_list);
                 arrayAdapter.notifyDataSetChanged();
-                if( ! searchView.isIconified()) {
+
+                if (!searchView.isIconified()) {
                     searchView.setIconified(true);
                 }
                 searchItem.collapseActionView();
                 return false;
             }
+
             @Override
             public boolean onQueryTextChange(String s) {
                 // UserFeedback.show( "SearchOnQueryTextChanged: " + s);
@@ -132,8 +153,7 @@ public class libraryFragment extends ListFragment {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if(id == R.id.action_refresh)
-        {
+        if (id == R.id.action_refresh) {
             array_list = librarydb.getAllBooks();
             arrayAdapter.clear();
             arrayAdapter.addAll(array_list);
@@ -142,8 +162,7 @@ public class libraryFragment extends ListFragment {
         return super.onOptionsItemSelected(item);
     }
 
-    public void showToast(CharSequence text)
-    {
+    public void showToast(CharSequence text) {
         Context context = getActivity();
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(context, text, duration);
