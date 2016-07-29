@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -80,7 +79,6 @@ public class libraryFragment extends ListFragment {
             String loanee = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_LOANEE));
             String email = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_EMAIL));
             String date = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_DATE));
-            //int ID = cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ID));
             showToast(title + " loaned to " + loanee + " <" + email + "> on " + date);
         }
         else
@@ -92,7 +90,6 @@ public class libraryFragment extends ListFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //inflater.inflate(R.menu.main, menu);
         super.onCreateOptionsMenu(menu, inflater);
         final MenuItem searchItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) searchItem.getActionView();

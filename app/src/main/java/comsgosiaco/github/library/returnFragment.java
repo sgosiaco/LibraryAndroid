@@ -92,7 +92,6 @@ public class returnFragment extends ListFragment{
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //inflater.inflate(R.menu.main, menu);
         super.onCreateOptionsMenu(menu, inflater);
         final MenuItem searchItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) searchItem.getActionView();

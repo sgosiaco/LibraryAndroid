@@ -3,7 +3,6 @@ package comsgosiaco.github.library;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -11,7 +10,6 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
-import android.support.design.widget.TabLayout;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -56,13 +54,13 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-
     public void resetIncrement()
     {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from " + TABLE_NAME);
         db.execSQL("delete from sqlite_sequence where name='" + TABLE_NAME + "'");
     }
+
     public boolean insertBook(String title, String author, String publisher, String year, String isbn, String isbn13, String loaned, String loanee, String email, String date)
     {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -81,13 +79,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public Cursor getData(int id){
-        SQLiteDatabase db = this.getReadableDatabase();
-        //Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where id="+id+"", null );
-        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " order by id limit 1 offset " + id, null );
-        return res;
-    }
-
     public Cursor getDataISBN(int isbn){
         SQLiteDatabase db = this.getReadableDatabase();
         //Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where id="+id+"", null );
@@ -102,24 +93,10 @@ public class DBHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    public Cursor getLoanData(int id){
-        SQLiteDatabase db = this.getReadableDatabase();
-        //Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where id="+id+"", null );
-        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " order by loaned DESC limit 1 offset " + id, null );
-        return res;
-    }
-
     public Cursor getLoanData(String title){
         SQLiteDatabase db = this.getReadableDatabase();
         //Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where id="+id+"", null );
         Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where title='"+title+"' order by loaned DESC limit 1 offset 0", null );
-        return res;
-    }
-
-    public Cursor getAvailData(int id){
-        SQLiteDatabase db = this.getReadableDatabase();
-        //Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where id="+id+"", null );
-        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " order by loaned ASC limit 1 offset " + id, null );
         return res;
     }
 
@@ -186,13 +163,43 @@ public class DBHelper extends SQLiteOpenHelper {
         return array_list;
     }
 
+
+    public ArrayList<String> getAllBooks(String title)
+    {
+        ArrayList<String> array_list = new ArrayList<String>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where title like \"%"+title+"%\"", null );
+        res.moveToFirst();
+
+        while(res.isAfterLast() == false){
+            array_list.add(res.getString(res.getColumnIndex(COLUMN_TITLE)));
+            res.moveToNext();
+        }
+        return array_list;
+    }
+
     public ArrayList<String> getAllLoanedBooks()
     {
         ArrayList<String> array_list = new ArrayList<String>();
-
-        //hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res =  db.rawQuery( "select * from " + TABLE_NAME, null );
+        res.moveToFirst();
+
+        while(res.isAfterLast() == false){
+            if(res.getString(res.getColumnIndex(COLUMN_LOANED)).equals("TRUE"))
+            {
+                array_list.add(res.getString(res.getColumnIndex(COLUMN_TITLE)));
+            }
+            res.moveToNext();
+        }
+        return array_list;
+    }
+
+    public ArrayList<String> getAllLoanedBooks(String title)
+    {
+        ArrayList<String> array_list = new ArrayList<String>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where title like \"%"+title+"%\"", null );
         res.moveToFirst();
 
         while(res.isAfterLast() == false){
@@ -215,10 +222,25 @@ public class DBHelper extends SQLiteOpenHelper {
     public ArrayList<String> getAllAvailableBooks()
     {
         ArrayList<String> array_list = new ArrayList<String>();
-
-        //hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res =  db.rawQuery( "select * from " + TABLE_NAME, null );
+        res.moveToFirst();
+
+        while(res.isAfterLast() == false){
+            if(!(res.getString(res.getColumnIndex(COLUMN_LOANED)).equals("TRUE")))
+            {
+                array_list.add(res.getString(res.getColumnIndex(COLUMN_TITLE)));
+            }
+            res.moveToNext();
+        }
+        return array_list;
+    }
+
+    public ArrayList<String> getAllAvailableBooks(String title)
+    {
+        ArrayList<String> array_list = new ArrayList<String>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where title like \"%"+title+"%\"", null );
         res.moveToFirst();
 
         while(res.isAfterLast() == false){
@@ -236,59 +258,5 @@ public class DBHelper extends SQLiteOpenHelper {
         //Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where id="+id+"", null );
         Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where loaned='FALSE'", null );
         return res;
-    }
-
-    public ArrayList<String> getAllBooks(String title)
-    {
-        ArrayList<String> array_list = new ArrayList<String>();
-
-        //hp = new HashMap();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where title like \"%"+title+"%\"", null );
-        res.moveToFirst();
-
-        while(res.isAfterLast() == false){
-            array_list.add(res.getString(res.getColumnIndex(COLUMN_TITLE)));
-            res.moveToNext();
-        }
-        return array_list;
-    }
-
-    public ArrayList<String> getAllLoanedBooks(String title)
-    {
-        ArrayList<String> array_list = new ArrayList<String>();
-
-        //hp = new HashMap();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where title like \"%"+title+"%\"", null );
-        res.moveToFirst();
-
-        while(res.isAfterLast() == false){
-            if(res.getString(res.getColumnIndex(COLUMN_LOANED)).equals("TRUE"))
-            {
-                array_list.add(res.getString(res.getColumnIndex(COLUMN_TITLE)));
-            }
-            res.moveToNext();
-        }
-        return array_list;
-    }
-
-    public ArrayList<String> getAllAvailableBooks(String title)
-    {
-        ArrayList<String> array_list = new ArrayList<String>();
-
-        //hp = new HashMap();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where title like \"%"+title+"%\"", null );
-        res.moveToFirst();
-
-        while(res.isAfterLast() == false){
-            if(!(res.getString(res.getColumnIndex(COLUMN_LOANED)).equals("TRUE")))
-            {
-                array_list.add(res.getString(res.getColumnIndex(COLUMN_TITLE)));
-            }
-            res.moveToNext();
-        }
-        return array_list;
     }
 }

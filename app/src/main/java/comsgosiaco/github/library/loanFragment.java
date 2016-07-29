@@ -65,12 +65,8 @@ public class loanFragment extends ListFragment{
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
                                            int pos, long id) {
-                doLaunchContactPicker(getView().findViewById(android.R.id.content), 1001);
                 index = pos;
-                //debug
-                //Cursor c = librarydb.getAvailData(position);
-                //c.moveToFirst();
-                //showToast(c.getInt(c.getColumnIndex(DBHelper.COLUMN_ID)) + c.getString(c.getColumnIndex(DBHelper.COLUMN_TITLE)));
+                doLaunchContactPicker(getView().findViewById(android.R.id.content), 1001);
                 return true;
             }
         });
@@ -78,8 +74,6 @@ public class loanFragment extends ListFragment{
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        //Cursor cursor = librarydb.getAvailData(position);
-        //showToast((String) array_list.get(position));
         Cursor cursor = librarydb.getAvailData((String) array_list.get(position));
         cursor.moveToFirst();
         String title = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_TITLE));
@@ -92,7 +86,6 @@ public class loanFragment extends ListFragment{
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //inflater.inflate(R.menu.main, menu);
         super.onCreateOptionsMenu(menu, inflater);
         final MenuItem searchItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) searchItem.getActionView();

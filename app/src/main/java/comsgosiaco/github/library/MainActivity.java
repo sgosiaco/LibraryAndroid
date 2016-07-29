@@ -1,9 +1,7 @@
 package comsgosiaco.github.library;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.DialogFragment;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,13 +11,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.ListFragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -29,19 +23,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Patterns;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity implements exportEmailDialogFragment.exportEmailDialogListener, NavigationView.OnNavigationItemSelectedListener {
@@ -146,34 +132,26 @@ app:showAsAction="never" />
         int id = item.getItemId();
 
         if (id == R.id.library) {
-            //showToast("Library");
             FragmentManager fm = getSupportFragmentManager();
             android.support.v4.app.FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.fragment, new libraryFragment());
             ft.commit();
         } else if (id == R.id.loanbook) {
-            //showToast("Loan");
             FragmentManager fm = getSupportFragmentManager();
             android.support.v4.app.FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.fragment, new loanFragment());
             ft.commit();
         } else if (id == R.id.returnbook) {
-            //showToast("Return");
             FragmentManager fm = getSupportFragmentManager();
             android.support.v4.app.FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.fragment, new returnFragment());
             ft.commit();
         } else if (id == R.id.exportall) {
-            //DialogFragment fragment = new exportEmailDialogFragment();
-            //fragment.show(getFragmentManager(), "exportall");
             doLaunchContactPicker(this.findViewById(android.R.id.content), 1001);
-            //showToast("Export all");
         } else if (id == R.id.exportcheckedout) {
             doLaunchContactPicker(this.findViewById(android.R.id.content), 1002);
-            //showToast("Export loaned");
         } else if (id == R.id.exportavailable) {
             doLaunchContactPicker(this.findViewById(android.R.id.content), 1003);
-            //showToast("Export available");
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -201,7 +179,6 @@ app:showAsAction="never" />
         } else {
             Intent intent = new Intent(this, clss);
             startActivity(intent);
-            //overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         }
     }
 
@@ -311,90 +288,8 @@ app:showAsAction="never" />
                         else
                         {
                             //do something with email here
-                            try {
-                                Cursor cs = librarydb.getAllLoanedBooksCursor();
-                                FileWriter fw = new FileWriter(LOANED_DIR);
-                                
-                                fw.append("id");
-                                fw.append(',');
-
-                                fw.append("title");
-                                fw.append(',');
-
-                                fw.append("author");
-                                fw.append(',');
-
-                                fw.append("publisher");
-                                fw.append(',');
-
-                                fw.append("year");
-                                fw.append(',');
-
-                                fw.append("isbn");
-                                fw.append(',');
-
-                                fw.append("isbn13");
-                                fw.append(',');
-
-                                fw.append("loaned");
-                                fw.append(',');
-
-                                fw.append("loanee");
-                                fw.append(',');
-
-                                fw.append("email");
-                                fw.append(',');
-
-                                fw.append("date");
-
-                                fw.append('\n');
-
-                                if (cs.moveToFirst()) {
-                                    do {
-                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_ID)));
-                                        fw.append(',');
-
-                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_TITLE)));
-                                        fw.append(',');
-
-                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_AUTHOR)));
-                                        fw.append(',');
-
-                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_PUBLISHER)));
-                                        fw.append(',');
-
-                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_YEAR)));
-                                        fw.append(',');
-
-                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_ISBN)));
-                                        fw.append(',');
-
-                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_ISBN13)));
-                                        fw.append(',');
-
-                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_LOANED)));
-                                        fw.append(',');
-
-                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_LOANEE)));
-                                        fw.append(',');
-
-                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_EMAIL)));
-                                        fw.append(',');
-
-                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_DATE)));
-
-                                        fw.append('\n');
-
-                                    } while (cs.moveToNext());
-                                }
-                                if (cs != null && !cs.isClosed()) {
-                                    cs.close();
-                                }
-                                fw.close();
-
-                            } catch (Exception e) {
-                            }
-
+                            Cursor cs = librarydb.getAllLoanedBooksCursor();
+                            exportCSV(cs, LOANED_DIR);
                             String[] address = {email};
                             composeEmail(address, "Export loaned books", Uri.fromFile(new File(LOANED_DIR)));
                         }
@@ -431,90 +326,8 @@ app:showAsAction="never" />
                         }
                         else
                         {
-                            try {
-                                Cursor cs = librarydb.getAllAvailableBooksCursor();
-                                FileWriter fw = new FileWriter(AVAIL_DIR);
-
-                                fw.append("id");
-                                fw.append(',');
-
-                                fw.append("title");
-                                fw.append(',');
-
-                                fw.append("author");
-                                fw.append(',');
-
-                                fw.append("publisher");
-                                fw.append(',');
-
-                                fw.append("year");
-                                fw.append(',');
-
-                                fw.append("isbn");
-                                fw.append(',');
-
-                                fw.append("isbn13");
-                                fw.append(',');
-
-                                fw.append("loaned");
-                                fw.append(',');
-
-                                fw.append("loanee");
-                                fw.append(',');
-
-                                fw.append("email");
-                                fw.append(',');
-
-                                fw.append("date");
-
-                                fw.append('\n');
-
-                                if (cs.moveToFirst()) {
-                                    do {
-                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_ID)));
-                                        fw.append(',');
-
-                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_TITLE)));
-                                        fw.append(',');
-
-                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_AUTHOR)));
-                                        fw.append(',');
-
-                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_PUBLISHER)));
-                                        fw.append(',');
-
-                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_YEAR)));
-                                        fw.append(',');
-
-                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_ISBN)));
-                                        fw.append(',');
-
-                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_ISBN13)));
-                                        fw.append(',');
-
-                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_LOANED)));
-                                        fw.append(',');
-
-                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_LOANEE)));
-                                        fw.append(',');
-
-                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_EMAIL)));
-                                        fw.append(',');
-
-                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_DATE)));
-
-                                        fw.append('\n');
-
-                                    } while (cs.moveToNext());
-                                }
-                                if (cs != null && !cs.isClosed()) {
-                                    cs.close();
-                                }
-                                fw.close();
-
-                            } catch (Exception e) {
-                            }
-
+                            Cursor cs = librarydb.getAllAvailableBooksCursor();
+                            exportCSV(cs, AVAIL_DIR);
                             String[] address = {email};
                             composeEmail(address, "Export available books", Uri.fromFile(new File(AVAIL_DIR)));
                         }
@@ -532,6 +345,92 @@ app:showAsAction="never" />
     {
         Pattern pattern = Patterns.EMAIL_ADDRESS;
         return pattern.matcher(email).matches();
+    }
+
+    private void exportCSV(Cursor cs, String dir)
+    {
+        try {
+            FileWriter fw = new FileWriter(dir);
+
+            fw.append("id");
+            fw.append(',');
+
+            fw.append("title");
+            fw.append(',');
+
+            fw.append("author");
+            fw.append(',');
+
+            fw.append("publisher");
+            fw.append(',');
+
+            fw.append("year");
+            fw.append(',');
+
+            fw.append("isbn");
+            fw.append(',');
+
+            fw.append("isbn13");
+            fw.append(',');
+
+            fw.append("loaned");
+            fw.append(',');
+
+            fw.append("loanee");
+            fw.append(',');
+
+            fw.append("email");
+            fw.append(',');
+
+            fw.append("date");
+
+            fw.append('\n');
+
+            if (cs.moveToFirst()) {
+                do {
+                    fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_ID)));
+                    fw.append(',');
+
+                    fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_TITLE)));
+                    fw.append(',');
+
+                    fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_AUTHOR)));
+                    fw.append(',');
+
+                    fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_PUBLISHER)));
+                    fw.append(',');
+
+                    fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_YEAR)));
+                    fw.append(',');
+
+                    fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_ISBN)));
+                    fw.append(',');
+
+                    fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_ISBN13)));
+                    fw.append(',');
+
+                    fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_LOANED)));
+                    fw.append(',');
+
+                    fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_LOANEE)));
+                    fw.append(',');
+
+                    fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_EMAIL)));
+                    fw.append(',');
+
+                    fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_DATE)));
+
+                    fw.append('\n');
+
+                } while (cs.moveToNext());
+            }
+            if (cs != null && !cs.isClosed()) {
+                cs.close();
+            }
+            fw.close();
+
+        } catch (Exception e) {
+        }
     }
 
     public void composeEmail(String[] addresses, String subject, Uri attachment) {

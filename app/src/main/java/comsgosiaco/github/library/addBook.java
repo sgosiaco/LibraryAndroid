@@ -5,7 +5,6 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -61,9 +60,7 @@ public class addBook extends AppCompatActivity implements addBookDialogFragment.
 
     public void add(View view)
     {
-        //add saving here
         TextView titleText = (TextView) findViewById(R.id.title);
-        //showToast(titleText.getText().toString());
         TextView authorText = (TextView) findViewById(R.id.author);
         TextView isbnText = (TextView) findViewById(R.id.isbn);
         TextView isbn13Text = (TextView) findViewById(R.id.isbn13);
@@ -217,7 +214,6 @@ public class addBook extends AppCompatActivity implements addBookDialogFragment.
 
                         TextView barcodeText = (TextView) findViewById(R.id.isbn);
                         barcodeText.setText(barcode);
-                        //showToast(barcode);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -291,7 +287,6 @@ public class addBook extends AppCompatActivity implements addBookDialogFragment.
 
                         TextView barcodeText = (TextView) findViewById(R.id.isbn13);
                         barcodeText.setText(barcode);
-                        //showToast(barcode);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
