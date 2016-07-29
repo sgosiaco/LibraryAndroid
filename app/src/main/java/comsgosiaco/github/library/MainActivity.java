@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -265,7 +266,9 @@ app:showAsAction="never" />
                             //TextView emailEntry = (TextView) findViewById(R.id.textView2);
                             //emailEntry.setText(email);
                             String[] address = {email};
-                            composeEmail(address, "Export all books", Uri.fromFile(new File("library.db"))); //replace with correct file
+                            composeEmail(address, "Export all books", Uri.fromFile(new File(Environment.getExternalStorageDirectory()
+                                    + File.separator + "Library"
+                                    + File.separator + DBHelper.DATABASE_NAME))); //replace with correct file
                         }
                     }
 

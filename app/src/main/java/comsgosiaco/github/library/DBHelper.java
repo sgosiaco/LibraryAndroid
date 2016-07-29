@@ -1,5 +1,6 @@
 package comsgosiaco.github.library;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -9,6 +10,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 import android.support.design.widget.TabLayout;
 
 public class DBHelper extends SQLiteOpenHelper {
@@ -31,7 +33,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public DBHelper(Context context)
     {
-        super(context, DATABASE_NAME , null, DATABASE_VERSION);
+        //super(context, DATABASE_NAME , null, DATABASE_VERSION);
+        super(context, Environment.getExternalStorageDirectory()
+                + File.separator + "Library"
+                + File.separator + DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
