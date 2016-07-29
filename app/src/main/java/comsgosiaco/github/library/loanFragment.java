@@ -85,7 +85,8 @@ public class loanFragment extends ListFragment{
         String title = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_TITLE));
         String author = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_AUTHOR));
         String isbn = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_ISBN));
-        showToast(title + " <" + isbn + "> by " + author);
+        String isbn13 = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_ISBN13));
+        showToast(title + " <" + isbn + ", " + isbn13 + "> by " + author);
     }
 
     @Override
@@ -205,9 +206,10 @@ public class loanFragment extends ListFragment{
                                 String publisher = cs.getString(cs.getColumnIndex(DBHelper.COLUMN_PUBLISHER));
                                 String year = cs.getString(cs.getColumnIndex(DBHelper.COLUMN_YEAR));
                                 String isbn = cs.getString(cs.getColumnIndex(DBHelper.COLUMN_ISBN));
+                                String isbn13 = cs.getString(cs.getColumnIndex(DBHelper.COLUMN_ISBN13));
                                 String loaned = "TRUE";
                                 String date = new SimpleDateFormat("MM-dd-yyyy").format(new Date());
-                                librarydb.updateBook(id, title, author, publisher, year, isbn, loaned, name, email, date);
+                                librarydb.updateBook(id, title, author, publisher, year, isbn, isbn13, loaned, name, email, date);
                                 array_list = librarydb.getAllAvailableBooks();
                                 arrayAdapter.clear();
                                 arrayAdapter.addAll(array_list);

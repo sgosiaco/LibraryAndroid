@@ -55,7 +55,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/scanButton"
-        android:hint="ISBN"
+        android:hint="ISBN_10"
         android:singleLine="true"
         android:layout_toLeftOf="@+id/scanButton" />
 
@@ -71,8 +71,21 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/publisher"
+        android:inputType="numberSigned"
+        android:id="@+id/isbn13"
         android:layout_below="@+id/isbn"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:hint="ISBN_13"
+        android:singleLine="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/publisher"
+        android:layout_below="@+id/isbn13"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"

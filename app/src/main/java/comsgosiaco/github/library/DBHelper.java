@@ -14,14 +14,15 @@ import android.support.design.widget.TabLayout;
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "library.db";
-    public static final int DATABASE_VERSION = 4;
+    public static final int DATABASE_VERSION = 5;
     public static final String TABLE_NAME = "library";
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_TITLE = "title"; //book title
     public static final String COLUMN_AUTHOR = "author"; //book author
     public static final String COLUMN_PUBLISHER = "publisher"; //book publisher
     public static final String COLUMN_YEAR = "year"; //year publisher
-    public static final String COLUMN_ISBN = "isbn"; //isbn
+    public static final String COLUMN_ISBN = "isbn"; //isbn 10
+    public static final String COLUMN_ISBN13 = "isbn13"; //isbn 13
     public static final String COLUMN_LOANED = "loaned"; //loaned or not TRUE or FALSE
     public static final String COLUMN_LOANEE = "loanee"; //person borrowing the book
     public static final String COLUMN_EMAIL = "email"; //email of borrower
@@ -38,7 +39,7 @@ public class DBHelper extends SQLiteOpenHelper {
         // TODO Auto-generated method stub
         db.execSQL(
                 "create table " + TABLE_NAME + " " +
-                        "(id integer primary key autoincrement, title text, author text, publisher text, year text, isbn text, loaned text, loanee text, email text, date text)"
+                        "(id integer primary key autoincrement, title text, author text, publisher text, year text, isbn text, isbn13 text, loaned text, loanee text, email text, date text)"
         );
     }
 
@@ -56,7 +57,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("delete from " + TABLE_NAME);
         db.execSQL("delete from sqlite_sequence where name='" + TABLE_NAME + "'");
     }
-    public boolean insertBook(String title, String author, String publisher, String year, String isbn, String loaned, String loanee, String email, String date)
+    public boolean insertBook(String title, String author, String publisher, String year, String isbn, String isbn13, String loaned, String loanee, String email, String date)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -65,6 +66,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("publisher", publisher);
         contentValues.put("year", year);
         contentValues.put("isbn", isbn);
+        contentValues.put("isbn13", isbn13);
         contentValues.put("loaned", loaned);
         contentValues.put("loanee", loanee);
         contentValues.put("email", email);
@@ -77,6 +79,13 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         //Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where id="+id+"", null );
         Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " order by id limit 1 offset " + id, null );
+        return res;
+    }
+
+    public Cursor getDataISBN(int isbn){
+        SQLiteDatabase db = this.getReadableDatabase();
+        //Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where id="+id+"", null );
+        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where isbn like \"%"+isbn+"%\"", null );
         return res;
     }
 
@@ -128,7 +137,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return numRows;
     }
 
-    public boolean updateBook(int id, String title, String author, String publisher, String year, String isbn, String loaned, String loanee, String email, String date)
+    public boolean updateBook(int id, String title, String author, String publisher, String year, String isbn, String isbn13, String loaned, String loanee, String email, String date)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -138,6 +147,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("publisher", publisher);
         contentValues.put("year", year);
         contentValues.put("isbn", isbn);
+        contentValues.put("isbn13", isbn13);
         contentValues.put("loaned", loaned);
         contentValues.put("loanee", loanee);
         contentValues.put("email", email);

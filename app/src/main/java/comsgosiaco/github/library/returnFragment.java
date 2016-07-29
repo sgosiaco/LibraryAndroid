@@ -62,11 +62,12 @@ public class returnFragment extends ListFragment{
                 String publisher = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_PUBLISHER));
                 String year = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_YEAR));
                 String isbn = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_ISBN));
+                String isbn13 = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_ISBN13));
                 String loaned = "FALSE";
                 String loanee = "";
                 String email = "";
                 String date = "";
-                librarydb.updateBook(ID, title, author, publisher, year, isbn, loaned, loanee, email, date);
+                librarydb.updateBook(ID, title, author, publisher, year, isbn, isbn13, loaned, loanee, email, date);
                 array_list = librarydb.getAllLoanedBooks();
                 arrayAdapter.clear();
                 arrayAdapter.addAll(array_list);
