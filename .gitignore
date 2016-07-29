@@ -6,3 +6,13 @@
 .DS_Store
 /build
 /captures
+app/hs_err_pid11804.log
+app/hs_err_pid3728.log
+app/hs_err_pid7212.log
+app/hs_err_pid8104.log
+app/hs_err_pid9884.log
+app/replay_pid11804.log
+app/replay_pid3728.log
+app/replay_pid7212.log
+app/replay_pid8104.log
+app/replay_pid9884.log
