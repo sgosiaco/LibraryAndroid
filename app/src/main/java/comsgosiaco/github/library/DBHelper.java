@@ -29,13 +29,14 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_LOANEE = "loanee"; //person borrowing the book
     public static final String COLUMN_EMAIL = "email"; //email of borrower
     public static final String COLUMN_DATE = "date"; //date loaned
+    public static final String FILE_DIR = "comsgosiaco.github.library";
     private HashMap hp;
 
     public DBHelper(Context context)
     {
         //super(context, DATABASE_NAME , null, DATABASE_VERSION);
         super(context, Environment.getExternalStorageDirectory()
-                + File.separator + "Library"
+                + File.separator + FILE_DIR
                 + File.separator + DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -204,6 +205,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return array_list;
     }
 
+    public Cursor getAllLoanedBooksCursor(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        //Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where id="+id+"", null );
+        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where loaned='TRUE'", null );
+        return res;
+    }
+
     public ArrayList<String> getAllAvailableBooks()
     {
         ArrayList<String> array_list = new ArrayList<String>();
@@ -221,6 +229,13 @@ public class DBHelper extends SQLiteOpenHelper {
             res.moveToNext();
         }
         return array_list;
+    }
+
+    public Cursor getAllAvailableBooksCursor(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        //Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where id="+id+"", null );
+        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where loaned='FALSE'", null );
+        return res;
     }
 
     public ArrayList<String> getAllBooks(String title)

@@ -37,7 +37,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Patterns;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -46,7 +49,13 @@ public class MainActivity extends AppCompatActivity implements exportEmailDialog
     private static final int ZBAR_CAMERA_PERMISSION = 1;
     private Class<?> mClss;
     public static ActionBarDrawerToggle toggle;
-    //private DBHelper librarydb;
+    private DBHelper librarydb;
+    private static String LOANED_DIR = Environment.getExternalStorageDirectory()
+            + File.separator + DBHelper.FILE_DIR
+            + File.separator + "loaned.csv";
+    private static String AVAIL_DIR = Environment.getExternalStorageDirectory()
+            + File.separator + DBHelper.FILE_DIR
+            + File.separator + "available.csv";
     //private ArrayList array_list;
     //private ArrayAdapter<String> arrayAdapter;
     //private ListView obj;
@@ -79,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements exportEmailDialog
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //librarydb = new DBHelper(this);
+        librarydb = new DBHelper(this);
     }
 
     @Override
@@ -158,13 +167,13 @@ app:showAsAction="never" />
             //DialogFragment fragment = new exportEmailDialogFragment();
             //fragment.show(getFragmentManager(), "exportall");
             doLaunchContactPicker(this.findViewById(android.R.id.content), 1001);
-            showToast("Export all");
+            //showToast("Export all");
         } else if (id == R.id.exportcheckedout) {
             doLaunchContactPicker(this.findViewById(android.R.id.content), 1002);
-            showToast("Export loaned");
+            //showToast("Export loaned");
         } else if (id == R.id.exportavailable) {
             doLaunchContactPicker(this.findViewById(android.R.id.content), 1003);
-            showToast("Export available");
+            //showToast("Export available");
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -263,12 +272,10 @@ app:showAsAction="never" />
                         else
                         {
                             //do something with email here
-                            //TextView emailEntry = (TextView) findViewById(R.id.textView2);
-                            //emailEntry.setText(email);
                             String[] address = {email};
                             composeEmail(address, "Export all books", Uri.fromFile(new File(Environment.getExternalStorageDirectory()
-                                    + File.separator + "Library"
-                                    + File.separator + DBHelper.DATABASE_NAME))); //replace with correct file
+                                    + File.separator + DBHelper.FILE_DIR
+                                    + File.separator + DBHelper.DATABASE_NAME)));
                         }
                     }
 
@@ -304,8 +311,92 @@ app:showAsAction="never" />
                         else
                         {
                             //do something with email here
-                            TextView emailEntry = (TextView) findViewById(R.id.textView);
-                            emailEntry.setText(email);
+                            try {
+                                Cursor cs = librarydb.getAllLoanedBooksCursor();
+                                FileWriter fw = new FileWriter(LOANED_DIR);
+                                
+                                fw.append("id");
+                                fw.append(',');
+
+                                fw.append("title");
+                                fw.append(',');
+
+                                fw.append("author");
+                                fw.append(',');
+
+                                fw.append("publisher");
+                                fw.append(',');
+
+                                fw.append("year");
+                                fw.append(',');
+
+                                fw.append("isbn");
+                                fw.append(',');
+
+                                fw.append("isbn13");
+                                fw.append(',');
+
+                                fw.append("loaned");
+                                fw.append(',');
+
+                                fw.append("loanee");
+                                fw.append(',');
+
+                                fw.append("email");
+                                fw.append(',');
+
+                                fw.append("date");
+
+                                fw.append('\n');
+
+                                if (cs.moveToFirst()) {
+                                    do {
+                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_ID)));
+                                        fw.append(',');
+
+                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_TITLE)));
+                                        fw.append(',');
+
+                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_AUTHOR)));
+                                        fw.append(',');
+
+                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_PUBLISHER)));
+                                        fw.append(',');
+
+                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_YEAR)));
+                                        fw.append(',');
+
+                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_ISBN)));
+                                        fw.append(',');
+
+                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_ISBN13)));
+                                        fw.append(',');
+
+                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_LOANED)));
+                                        fw.append(',');
+
+                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_LOANEE)));
+                                        fw.append(',');
+
+                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_EMAIL)));
+                                        fw.append(',');
+
+                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_DATE)));
+
+                                        fw.append('\n');
+
+                                    } while (cs.moveToNext());
+                                }
+                                if (cs != null && !cs.isClosed()) {
+                                    cs.close();
+                                }
+                                fw.close();
+
+                            } catch (Exception e) {
+                            }
+
+                            String[] address = {email};
+                            composeEmail(address, "Export loaned books", Uri.fromFile(new File(LOANED_DIR)));
                         }
                     }
 
@@ -340,8 +431,92 @@ app:showAsAction="never" />
                         }
                         else
                         {
-                            //do something with email here
-                            showToast(email);
+                            try {
+                                Cursor cs = librarydb.getAllAvailableBooksCursor();
+                                FileWriter fw = new FileWriter(AVAIL_DIR);
+
+                                fw.append("id");
+                                fw.append(',');
+
+                                fw.append("title");
+                                fw.append(',');
+
+                                fw.append("author");
+                                fw.append(',');
+
+                                fw.append("publisher");
+                                fw.append(',');
+
+                                fw.append("year");
+                                fw.append(',');
+
+                                fw.append("isbn");
+                                fw.append(',');
+
+                                fw.append("isbn13");
+                                fw.append(',');
+
+                                fw.append("loaned");
+                                fw.append(',');
+
+                                fw.append("loanee");
+                                fw.append(',');
+
+                                fw.append("email");
+                                fw.append(',');
+
+                                fw.append("date");
+
+                                fw.append('\n');
+
+                                if (cs.moveToFirst()) {
+                                    do {
+                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_ID)));
+                                        fw.append(',');
+
+                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_TITLE)));
+                                        fw.append(',');
+
+                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_AUTHOR)));
+                                        fw.append(',');
+
+                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_PUBLISHER)));
+                                        fw.append(',');
+
+                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_YEAR)));
+                                        fw.append(',');
+
+                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_ISBN)));
+                                        fw.append(',');
+
+                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_ISBN13)));
+                                        fw.append(',');
+
+                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_LOANED)));
+                                        fw.append(',');
+
+                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_LOANEE)));
+                                        fw.append(',');
+
+                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_EMAIL)));
+                                        fw.append(',');
+
+                                        fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_DATE)));
+
+                                        fw.append('\n');
+
+                                    } while (cs.moveToNext());
+                                }
+                                if (cs != null && !cs.isClosed()) {
+                                    cs.close();
+                                }
+                                fw.close();
+
+                            } catch (Exception e) {
+                            }
+
+                            String[] address = {email};
+                            composeEmail(address, "Export available books", Uri.fromFile(new File(AVAIL_DIR)));
                         }
                     }
 
