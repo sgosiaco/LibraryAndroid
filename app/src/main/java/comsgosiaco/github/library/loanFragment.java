@@ -151,13 +151,6 @@ public class loanFragment extends SwipeRefreshListFragment{
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if(id == R.id.action_refresh)
-        {
-            array_list = librarydb.getAllAvailableBooks();
-            arrayAdapter.clear();
-            arrayAdapter.addAll(array_list);
-            arrayAdapter.notifyDataSetChanged();
-        }
         return super.onOptionsItemSelected(item);
     }
 

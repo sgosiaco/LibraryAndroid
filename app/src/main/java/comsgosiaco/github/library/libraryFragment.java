@@ -153,12 +153,6 @@ public class libraryFragment extends SwipeRefreshListFragment {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_refresh) {
-            array_list = librarydb.getAllBooks();
-            arrayAdapter.clear();
-            arrayAdapter.addAll(array_list);
-            arrayAdapter.notifyDataSetChanged();
-        }
         return super.onOptionsItemSelected(item);
     }
 
