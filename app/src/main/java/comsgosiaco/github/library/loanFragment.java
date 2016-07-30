@@ -126,6 +126,10 @@ public class loanFragment extends SwipeRefreshListFragment{
                 if(cursor.getCount() == 0)
                 {
                     showToast(query + " doesn't exist!");
+                    array_list = librarydb.getAllAvailableBooks();
+                    arrayAdapter.clear();
+                    arrayAdapter.addAll(array_list);
+                    arrayAdapter.notifyDataSetChanged();
                     if( ! searchView.isIconified()) {
                         searchView.setIconified(true);
                     }
@@ -144,7 +148,13 @@ public class loanFragment extends SwipeRefreshListFragment{
             }
             @Override
             public boolean onQueryTextChange(String s) {
-                // UserFeedback.show( "SearchOnQueryTextChanged: " + s);
+                if(!s.equals(""))
+                {
+                    array_list = librarydb.getAllAvailableBooks(s);
+                    arrayAdapter.clear();
+                    arrayAdapter.addAll(array_list);
+                    arrayAdapter.notifyDataSetChanged();
+                }
                 return false;
             }
         });
@@ -156,6 +166,14 @@ public class loanFragment extends SwipeRefreshListFragment{
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
+        if(id == R.id.action_search)
+        {
+            array_list = librarydb.getAllAvailableBooks();
+            arrayAdapter.clear();
+            arrayAdapter.addAll(array_list);
+            arrayAdapter.notifyDataSetChanged();
+        }
 
         return super.onOptionsItemSelected(item);
     }

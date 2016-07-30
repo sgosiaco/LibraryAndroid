@@ -399,16 +399,16 @@ app:showAsAction="never" />
                     fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_ID)));
                     fw.append(',');
 
-                    fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_TITLE)));
+                    fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_TITLE)).replaceAll(",+", " "));
                     fw.append(',');
 
-                    fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_AUTHOR)));
+                    fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_AUTHOR)).replaceAll(",+", " "));
                     fw.append(',');
 
-                    fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_PUBLISHER)));
+                    fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_PUBLISHER)).replaceAll(",+", " "));
                     fw.append(',');
 
-                    fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_YEAR)));
+                    fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_YEAR)).replaceAll(",+", " "));
                     fw.append(',');
 
                     fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_ISBN)));
@@ -420,10 +420,10 @@ app:showAsAction="never" />
                     fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_LOANED)));
                     fw.append(',');
 
-                    fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_LOANEE)));
+                    fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_LOANEE)).replaceAll(",+", " "));
                     fw.append(',');
 
-                    fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_EMAIL)));
+                    fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_EMAIL)).replaceAll(",+", " "));
                     fw.append(',');
 
                     fw.append(cs.getString(cs.getColumnIndex(DBHelper.COLUMN_DATE)));

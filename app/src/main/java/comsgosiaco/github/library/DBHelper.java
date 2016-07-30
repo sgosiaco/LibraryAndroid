@@ -116,7 +116,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Cursor getDataExact(String title){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where title='"+title+"' limit 1 offset 0", null );
+        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where title='"+title+"'", null );
         //Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where title collate nocase =\""+title+"\"", null );
         return res;
     }
@@ -176,6 +176,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ArrayList<String> array_list = new ArrayList<String>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where title like \"%"+title+"%\"", null );
+        //Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where title or author or publisher or year or isbn or isbn13 or loaned or loanee or email or date like \"%"+title+"%\"", null );
         res.moveToFirst();
 
         while(res.isAfterLast() == false){

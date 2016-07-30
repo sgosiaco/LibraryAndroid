@@ -72,7 +72,7 @@ public class addBook extends AppCompatActivity implements addBookDialogFragment.
         }
         else
         {
-            if(librarydb.getDataISBN(Integer.parseInt(isbnText.getText().toString())).getCount() == 0)
+            if(librarydb.getDataISBN(Integer.parseInt(isbnText.getText().toString())).getCount() == 0 || librarydb.getDataExact(titleText.getText().toString()).getCount() == 0)
             {
                 if(librarydb.insertBook(titleText.getText().toString(), authorText.getText().toString(), publisherText.getText().toString(), dateText.getText().toString(), isbnText.getText().toString(), isbn13Text.getText().toString(),"FALSE", "", "", ""))
                 {
@@ -87,6 +87,8 @@ public class addBook extends AppCompatActivity implements addBookDialogFragment.
             else
             {
                 showToast("Adding duplicate book!");
+                String temp = titleText.getText().toString();
+                titleText.setText(temp+" ("+librarydb.getDataISBN(Integer.parseInt(isbnText.getText().toString())).getCount()+")");
             }
         }
     }
