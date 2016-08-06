@@ -105,6 +105,7 @@ public class returnFragment extends SwipeRefreshListFragment{
                 arrayAdapter.addAll(array_list);
                 arrayAdapter.notifyDataSetChanged();
                 showToast(title + " successfully returned to the library!");
+                cursor.close();
                 return true;
             }
         });
@@ -119,6 +120,7 @@ public class returnFragment extends SwipeRefreshListFragment{
         String email = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_EMAIL));
         String date = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_DATE));
         showToast(title + " loaned to " + loanee + " <" + email + "> on " + date);
+        cursor.close();
     }
 
     @Override
@@ -153,6 +155,7 @@ public class returnFragment extends SwipeRefreshListFragment{
                     searchView.setIconified(true);
                 }
                 searchItem.collapseActionView();
+                cursor.close();
                 return false;
             }
             @Override

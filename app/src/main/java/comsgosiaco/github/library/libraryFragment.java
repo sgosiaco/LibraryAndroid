@@ -113,6 +113,7 @@ public class libraryFragment extends SwipeRefreshListFragment implements Message
         } else {
             showToast(title + " is not loaned out");
         }
+        cursor.close();
     }
 
     @Override
@@ -148,6 +149,7 @@ public class libraryFragment extends SwipeRefreshListFragment implements Message
                     searchView.setIconified(true);
                 }
                 searchItem.collapseActionView();
+                cursor.close();
                 return false;
             }
 
@@ -208,6 +210,7 @@ public class libraryFragment extends SwipeRefreshListFragment implements Message
             arrayAdapter.clear();
             arrayAdapter.addAll(array_list);
             arrayAdapter.notifyDataSetChanged();
+            deleteCursor.close();
         }
     }
 

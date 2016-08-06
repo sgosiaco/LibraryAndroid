@@ -110,6 +110,7 @@ public class loanFragment extends SwipeRefreshListFragment{
         String isbn = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_ISBN));
         String isbn13 = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_ISBN13));
         showToast(title + " <" + isbn + ", " + isbn13 + "> by " + author);
+        cursor.close();
     }
 
     @Override
@@ -144,6 +145,7 @@ public class loanFragment extends SwipeRefreshListFragment{
                     searchView.setIconified(true);
                 }
                 searchItem.collapseActionView();
+                cursor.close();
                 return false;
             }
             @Override
@@ -248,6 +250,7 @@ public class loanFragment extends SwipeRefreshListFragment{
                                 arrayAdapter.addAll(array_list);
                                 arrayAdapter.notifyDataSetChanged();
                                 showToast(title + " successfully loaned to " + name);
+                                cs.close();
                             }
                         }
                     }
