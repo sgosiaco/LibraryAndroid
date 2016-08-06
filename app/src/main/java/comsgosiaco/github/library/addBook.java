@@ -36,16 +36,16 @@ public class addBook extends AppCompatActivity implements addBookDialogFragment.
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         final Button scan = (Button) findViewById(R.id.scanButton);
-        scan.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                manualSearch();
-                return true;
-            }
-        });
+        //scan.setOnLongClickListener(new View.OnLongClickListener() {
+        //    @Override
+        //    public boolean onLongClick(View v) {
+        //
+        //        return true;
+        //    }
+        //});
         scan.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                scan(v);
+                manualSearch();
             }
         });
         librarydb = new DBHelper(this);
@@ -56,6 +56,13 @@ public class addBook extends AppCompatActivity implements addBookDialogFragment.
             resetFields();
             Intent i = new Intent(addBook.this, FullScannerActivity.class);
             startActivityForResult(i, 1);
+    }
+
+    public void scan()
+    {
+        resetFields();
+        Intent i = new Intent(addBook.this, FullScannerActivity.class);
+        startActivityForResult(i, 1);
     }
 
     public void add(View view)
@@ -181,8 +188,8 @@ public class addBook extends AppCompatActivity implements addBookDialogFragment.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.search) {
-            manualSearch();
+        if (id == R.id.scanToolbar) {
+            scan();
             return true;
         }
 
