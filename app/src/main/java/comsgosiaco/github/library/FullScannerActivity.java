@@ -191,6 +191,12 @@ public class FullScannerActivity extends BaseScannerActivity implements MessageD
     }
 
     @Override
+    public void onDialogNegativeClick(DialogFragment dialog)
+    {
+
+    }
+
+    @Override
     public void onFormatsSaved(ArrayList<Integer> selectedIndices) {
         mSelectedIndices = selectedIndices;
         setupFormats();

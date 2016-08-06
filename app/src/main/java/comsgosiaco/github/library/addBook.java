@@ -23,7 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class addBook extends AppCompatActivity implements addBookDialogFragment.addBookDialogListener {
+public class addBook extends AppCompatActivity implements addBookDialogFragment.addBookDialogListener, MessageDialogFragment.MessageDialogListener {
 
     private DBHelper librarydb;
     @Override
@@ -86,22 +86,54 @@ public class addBook extends AppCompatActivity implements addBookDialogFragment.
             }
             else
             {
-                showToast("Adding duplicate book!");
-                String temp = titleText.getText().toString();
-                titleText.setText(temp+" ("+librarydb.getDataISBN(Integer.parseInt(isbnText.getText().toString())).getCount()+")");
+                showMessageDialog("Duplicate Book", "Add duplicate book?", "duplicate");
+                //showToast("Adding duplicate book!");
+                //String temp = titleText.getText().toString();
+                //titleText.setText(temp+" ("+librarydb.getDataISBN(Integer.parseInt(isbnText.getText().toString())).getCount()+")");
             }
         }
     }
 
     @Override
+    public void onDialogPositiveClick(android.support.v4.app.DialogFragment dialog)
+    {
+        TextView titleText = (TextView) findViewById(R.id.title);
+        TextView isbnText = (TextView) findViewById(R.id.isbn);
+        String temp = titleText.getText().toString();
+        titleText.setText(temp+" ("+librarydb.getDataISBN(Integer.parseInt(isbnText.getText().toString())).getCount()+")");
+    }
+
+    @Override
+    public void onDialogNegativeClick(android.support.v4.app.DialogFragment dialog)
+    {
+        //cancel for dupe book dialog
+    }
+
+    @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
-        resetFields();
+        switch(dialog.getTag())
+        {
+            case "add_book":
+                resetFields();
+                break;
+            default:
+                showToast("ERROR!");
+                break;
+        }
     }
 
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
         // User touched the dialog's negative button
-        finish();
+        switch(dialog.getTag())
+        {
+            case "add_book":
+                finish();
+                break;
+            default:
+                showToast("ERROR!");
+                break;
+        }
     }
 
     public void resetFields()
@@ -129,7 +161,7 @@ public class addBook extends AppCompatActivity implements addBookDialogFragment.
                 getBook(data.getStringExtra("barcode"));
             }
             if (resultCode == Activity.RESULT_CANCELED) {
-                showToast("Wrong type of barcode!");
+                //showToast("Wrong type of barcode!");
             }
         }
     }//onActivityResult
@@ -331,5 +363,10 @@ public class addBook extends AppCompatActivity implements addBookDialogFragment.
                 getBook(temp);
             }
         }
+    }
+
+    public void showMessageDialog(String title, String message, String tag) {
+        android.support.v4.app.DialogFragment fragment = MessageDialogFragment.newInstance(title, message, this);
+        fragment.show(getSupportFragmentManager(), tag);
     }
 }

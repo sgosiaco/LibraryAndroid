@@ -20,11 +20,12 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 
-public class libraryFragment extends SwipeRefreshListFragment {
+public class libraryFragment extends SwipeRefreshListFragment implements MessageDialogFragment.MessageDialogListener {
 
     private DBHelper librarydb;
     private ArrayList array_list;
     private ArrayAdapter<String> arrayAdapter;
+    private Cursor deleteCursor;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,13 +84,16 @@ public class libraryFragment extends SwipeRefreshListFragment {
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
                                            int pos, long id) {
-                Cursor cursor = librarydb.getDataExact((String) array_list.get(pos));
-                cursor.moveToFirst();
-                librarydb.deleteBook(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ID)));
-                array_list = librarydb.getAllBooks();
-                arrayAdapter.clear();
-                arrayAdapter.addAll(array_list);
-                arrayAdapter.notifyDataSetChanged();
+                //Cursor cursor = librarydb.getDataExact((String) array_list.get(pos));
+                //cursor.moveToFirst();
+                //librarydb.deleteBook(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ID)));
+                //array_list = librarydb.getAllBooks();
+                //arrayAdapter.clear();
+                //arrayAdapter.addAll(array_list);
+                //arrayAdapter.notifyDataSetChanged();
+                deleteCursor = librarydb.getDataExact((String) array_list.get(pos));
+                deleteCursor.moveToFirst();
+                showMessageDialog("Delete book?", "Permanently delete " + deleteCursor.getString(deleteCursor.getColumnIndex(DBHelper.COLUMN_TITLE)) +"?", "delete");
                 return true;
             }
         });
@@ -183,5 +187,33 @@ public class libraryFragment extends SwipeRefreshListFragment {
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
+    }
+
+    public void showMessageDialog(String title, String message, String tag) {
+        android.support.v4.app.DialogFragment fragment = MessageDialogFragment.newInstance(title, message, this);
+        fragment.show(getFragmentManager(), tag);
+    }
+
+    @Override
+    public void onDialogPositiveClick(android.support.v4.app.DialogFragment dialog)
+    {
+        if(deleteCursor.getCount() == 0)
+        {
+            showToast("ERROR DELETING");
+        }
+        else
+        {
+            librarydb.deleteBook(deleteCursor.getInt(deleteCursor.getColumnIndex(DBHelper.COLUMN_ID)));
+            array_list = librarydb.getAllBooks();
+            arrayAdapter.clear();
+            arrayAdapter.addAll(array_list);
+            arrayAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onDialogNegativeClick(android.support.v4.app.DialogFragment dialog)
+    {
+        //cancel for dupe book dialog
     }
 }
