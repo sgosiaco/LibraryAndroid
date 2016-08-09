@@ -79,7 +79,9 @@ public class addBook extends AppCompatActivity implements addBookDialogFragment.
         }
         else
         {
-            if(librarydb.getDataISBN(Integer.parseInt(isbnText.getText().toString())).getCount() == 0 || librarydb.getDataExact(titleText.getText().toString()).getCount() == 0)
+            //showToast(Integer.parseInt(isbnText.getText().toString())+"");
+            //showToast(librarydb.getDataISBN13(Integer.parseInt(isbn13Text.getText().toString())).getCount()+"");
+            if(librarydb.getDataISBN13(Long.parseLong(isbn13Text.getText().toString())).getCount() == 0 || librarydb.getDataExact(titleText.getText().toString()).getCount() == 0)
             {
                 if(librarydb.insertBook(titleText.getText().toString(), authorText.getText().toString(), publisherText.getText().toString(), dateText.getText().toString(), isbnText.getText().toString(), isbn13Text.getText().toString(),"FALSE", "", "", ""))
                 {
@@ -105,9 +107,9 @@ public class addBook extends AppCompatActivity implements addBookDialogFragment.
     public void onDialogPositiveClick(android.support.v4.app.DialogFragment dialog)
     {
         TextView titleText = (TextView) findViewById(R.id.title);
-        TextView isbnText = (TextView) findViewById(R.id.isbn);
+        TextView isbn13Text = (TextView) findViewById(R.id.isbn13);
         String temp = titleText.getText().toString();
-        titleText.setText(temp+" ("+librarydb.getDataISBN(Integer.parseInt(isbnText.getText().toString())).getCount()+")");
+        titleText.setText(temp+" ("+librarydb.getDataISBN13(Long.parseLong(isbn13Text.getText().toString())).getCount()+")");
     }
 
     @Override

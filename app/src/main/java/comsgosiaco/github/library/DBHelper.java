@@ -86,6 +86,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return res;
     }
 
+    public Cursor getDataISBN13(long isbn){
+        SQLiteDatabase db = this.getReadableDatabase();
+        //Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where id="+id+"", null );
+        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where isbn13="+isbn, null );
+        return res;
+    }
+
     public Cursor getData(String title){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res =  db.rawQuery( "select * from " + TABLE_NAME + " where title like \"%"+title+"%\"", null );
