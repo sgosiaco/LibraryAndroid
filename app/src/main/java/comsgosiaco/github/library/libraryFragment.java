@@ -40,7 +40,7 @@ public class libraryFragment extends SwipeRefreshListFragment implements Message
         super.onViewCreated(view, savedInstanceState);
 
         librarydb = new DBHelper(getActivity());
-        array_list = librarydb.getAllBooks();
+        array_list = librarydb.getAllBooksReverse();
         arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, array_list);
         setListAdapter(arrayAdapter);
         view.setBackgroundColor(Color.parseColor("#FAFAFA"));
@@ -48,7 +48,7 @@ public class libraryFragment extends SwipeRefreshListFragment implements Message
         setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                array_list = librarydb.getAllBooks();
+                array_list = librarydb.getAllBooksReverse();
                 arrayAdapter.clear();
                 arrayAdapter.addAll(array_list);
                 arrayAdapter.notifyDataSetChanged();
@@ -65,7 +65,7 @@ public class libraryFragment extends SwipeRefreshListFragment implements Message
     @Override
     public void onResume() {
         super.onResume();
-        array_list = librarydb.getAllBooks();
+        array_list = librarydb.getAllBooksReverse();
         arrayAdapter.clear();
         arrayAdapter.addAll(array_list);
         arrayAdapter.notifyDataSetChanged();
@@ -129,7 +129,7 @@ public class libraryFragment extends SwipeRefreshListFragment implements Message
                 Cursor cursor = librarydb.getData(query);
                 if (cursor.getCount() == 0) {
                     showToast(query + " doesn't exist!");
-                    array_list = librarydb.getAllBooks();
+                    array_list = librarydb.getAllBooksReverse();
                     arrayAdapter.clear();
                     arrayAdapter.addAll(array_list);
                     arrayAdapter.notifyDataSetChanged();
@@ -175,7 +175,7 @@ public class libraryFragment extends SwipeRefreshListFragment implements Message
         int id = item.getItemId();
         if(id == R.id.action_search)
         {
-            array_list = librarydb.getAllBooks();
+            array_list = librarydb.getAllBooksReverse();
             arrayAdapter.clear();
             arrayAdapter.addAll(array_list);
             arrayAdapter.notifyDataSetChanged();
@@ -206,7 +206,7 @@ public class libraryFragment extends SwipeRefreshListFragment implements Message
         else
         {
             librarydb.deleteBook(deleteCursor.getInt(deleteCursor.getColumnIndex(DBHelper.COLUMN_ID)));
-            array_list = librarydb.getAllBooks();
+            array_list = librarydb.getAllBooksReverse();
             arrayAdapter.clear();
             arrayAdapter.addAll(array_list);
             arrayAdapter.notifyDataSetChanged();

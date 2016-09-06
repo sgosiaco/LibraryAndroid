@@ -167,6 +167,7 @@ public class addBook extends AppCompatActivity implements addBookDialogFragment.
 
         if (requestCode == 1) {
             if(resultCode == Activity.RESULT_OK){
+                showToast(data.getStringExtra("barcode"));
                 getBook(data.getStringExtra("barcode"));
             }
             if (resultCode == Activity.RESULT_CANCELED) {

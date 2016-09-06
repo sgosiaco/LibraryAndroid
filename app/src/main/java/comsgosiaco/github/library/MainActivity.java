@@ -48,10 +48,12 @@ public class MainActivity extends AppCompatActivity implements exportEmailDialog
     //private ListView obj;
 
     //TO DO List
-    //add search to all tabs
-    //alert if adding duplicate book
+    //add search to all tabs  (done)
+    //alert if adding duplicate book (done)
     //ADD IF STATEMENTS TO CURSOR CLOSE
     //if(cursor != null) { cursor.close; }
+    //Add editing to already added book
+    //Possibly add another api for searching
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

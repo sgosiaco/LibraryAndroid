@@ -2,6 +2,7 @@ package comsgosiaco.github.library;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import android.content.ContentValues;
 import android.content.Context;
@@ -178,6 +179,23 @@ public class DBHelper extends SQLiteOpenHelper {
         return array_list;
     }
 
+    public ArrayList<String> getAllBooksReverse()
+    {
+        ArrayList<String> array_list = new ArrayList<String>();
+
+        //hp = new HashMap();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from " + TABLE_NAME, null );
+        res.moveToFirst();
+
+        while(res.isAfterLast() == false){
+            array_list.add(res.getString(res.getColumnIndex(COLUMN_TITLE)));
+            res.moveToNext();
+        }
+        res.close();
+        Collections.reverse(array_list);
+        return array_list;
+    }
 
     public ArrayList<String> getAllBooks(String title)
     {
